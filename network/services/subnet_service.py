@@ -50,5 +50,9 @@ class SubnetService:
             # Performans için toplu ekleme (Bulk create) yapıyoruz
             if ip_objects:
                 IPAnalysis.objects.bulk_create(ip_objects)
-
+            # ---- YENİ EKLENEN KISIM ----
+            # Normalde bunu Celery (.delay()) tetikleyecek, şimdilik senkron çağırıyoruz
+            from network.tasks.analyze_ip_task import analyze_subnet_ips_task
+            analyze_subnet_ips_task(subnet.id)
+            # ----------------------------
         return subnet, created
